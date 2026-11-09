@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>浄土真宗本願寺派 職務等級3等級 昇級試験対策</title>
+<style>
+:root{--g:#315f45;--g2:#234b35;--bg:#f5f1e7;--card:#fffdf8;--ink:#1e211e;--muted:#6d716b;--line:#ddd8cc;--ok:#287a48;--ng:#a83c32;--warn:#a36b10}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;line-height:1.65}
+header{background:var(--g);color:#fff;padding:26px 20px 22px}header h1{margin:0;font-size:28px}header p{margin:6px 0 0;opacity:.9}
+.wrap{max-width:760px;margin:auto;padding:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;margin:14px 0;box-shadow:0 2px 7px #00000008}
+.notice{border-left:6px solid var(--g)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center}.stat b{font-size:27px;display:block}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:4px 0}.tabs button{width:100%;min-width:0;padding:12px 7px}.tabs button{white-space:nowrap}.btn,button{border:0;border-radius:16px;padding:13px 17px;font-weight:700;font-size:16px;background:#e8e5db;color:var(--ink)}
+button.primary,.primary{background:var(--g);color:white}.danger{background:#f4dfdc;color:#7e2923}.ghost{background:#f0eee6}.active{background:var(--g)!important;color:#fff!important}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.wide{grid-column:1/-1}
+input,textarea,select{width:100%;font-size:18px;padding:14px;border:2px solid #cfcbbf;border-radius:16px;background:#fff;color:#111}
+textarea{min-height:120px}.qmeta{color:var(--g);font-weight:800}.q{font-size:23px;margin:14px 0}.answer{margin-top:14px;padding:16px;border-radius:16px;background:#f0f5f1}.correct{border-left:6px solid var(--ok)}.wrong{border-left:6px solid var(--ng)}.partial{border-left:6px solid var(--warn)}
+.small{font-size:14px;color:var(--muted)}.score{font-size:22px;font-weight:800}.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{padding:7px 10px;border-radius:999px;background:#ece9df;font-size:13px}
+.pastbtn{width:100%;text-align:left;margin:5px 0;background:#faf9f4;border:1px solid var(--line)}.rubric label{display:block;padding:10px 0;border-bottom:1px solid var(--line)}
+.hidden{display:none!important}.progress{height:10px;background:#e4e0d6;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--g)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+@media(max-width:520px){header h1{font-size:25px}.tabs{grid-template-columns:repeat(3,1fr)}.tabs button{font-size:14px;padding:11px 5px}.wrap{padding:10px}.card{padding:17px}.q{font-size:21px}.grid{grid-template-columns:1fr 1fr}.btn,button{font-size:15px;padding:12px 12px}}
+</style></head><body>
+<header><h1>職務等級3等級 昇級試験対策</h1><p>2025実物過去問 × 現行宗門法規 × 2026重点宗務</p></header>
+<div class="wrap">
+<div class="card notice"><b>この教材について</b>
+    <div>2025年度実物試験の出題形式をもとに、現行の宗門法規と2026年度の重点宗務を組み合わせた学習教材です。過去問の確認、分野別演習、要復習問題の反復、2026年度予想問題、論述練習に取り組めます。</div>
+    <div class="small" style="margin-top:8px">※本教材は非公式の試験対策教材です。「2026予想」は過去の出題傾向と今年度の宗務動向をもとに作成したもので、実際の出題を保証するものではありません。</div></div>
+<div class="stats">
+ <div class="card stat"><b id="done">0</b>回答</div><div class="card stat"><b id="rate">0%</b>自動正答率</div><div class="card stat"><b id="weak">0</b>要復習</div>
+</div>
+<div class="card">
+ <div class="tabs">
+  <button id="tQuiz" class="active" onclick="showTab('quiz')">一問一答</button>
+  <button id="tPast" onclick="showTab('past')">2025過去問</button>
+  <button id="tWeak" onclick="startWeak()">要復習</button>
+  <button id="tPred" onclick="showTab('pred')">2026予想</button>
+  <button id="tEssay" onclick="showTab('essay')">論述</button>
+ </div>
+</div>
+
+<section id="quizPane">
+ <div class="card">
+  <div class="grid">
+   <select id="cat" class="wide" onchange="startAll()"><option>全分野</option></select>
+   <button onclick="startRandom()">ランダム10問</button><button onclick="startAll()">全問演習</button>
+  </div><div class="small" style="margin-top:10px">採点後は入力した答案と正解をその場で確認できます。「次へ」や再挑戦では解答欄を白紙に戻し、端末には正誤・挑戦回数などの学習履歴だけを保存します。論述答案のみ途中保存します。</div>
+ </div>
+ <div id="qcard" class="card"></div>
+</section>
+
+<section id="pastPane" class="hidden">
+ <div class="card"><h2>2025年度 実物過去問</h2><p class="small">項目を押すと、その出題分野の問題演習へ直接移動します。</p><div id="pastList"></div></div>
+</section>
+
+<section id="predPane" class="hidden">
+ <div class="card"><div class="qmeta">2026年度 出題予想・総合版</div><h2>今年動いた宗務をまとめて対策</h2>
+ <p>2025実物の出題型を土台に、中期計画・総長執務方針・住職総参拝・総合振興計画終結後の措置・現行職制などを重点演習します。</p>
+ <div class="grid"><button class="primary" onclick="startFocus('中期')">中期計画を集中演習 ▶</button><button class="primary" onclick="startImportant()">重要宗務を集中演習 ▶</button><button class="wide" onclick="startPredMock()">2026予想模試（20問） ▶</button></div>
+ <h3>最重要A</h3><div class="chips"><span class="chip">中期計画</span><span class="chip">住職総参拝</span><span class="chip">注力施策3本</span><span class="chip">現行職制</span><span class="chip">宗務員規程</span></div>
+ </div>
+</section>
+
+<section id="essayPane" class="hidden">
+ <div class="card"><h2>論述練習</h2><select id="essaySel" onchange="renderEssay()"></select></div>
+ <div id="essayCard" class="card"></div>
+</section>
+
+<div class="card"><h3>分野別の定着度</h3><div id="bycat"></div></div>
+</div><footer>非公式学習教材｜学習履歴はこの端末内に保存</footer>
+
+<script>
+const qs=[
+['宗制・宗法','宗門の基本理念を答えよ。','あらゆる人々に阿弥陀如来の智慧と慈悲を伝え、もって自他共に心豊かに生きることのできる社会の実現に貢献する。'],
+['宗制・宗法','宗法第11条「消息」。門主は何のため、どのような手続で消息を発布する？','総局の申達によって、教義の弘通のため、又は特定の事項について意思を宣述するため消息を発布する。発布はあらかじめ勧学寮の同意を経る。'],
+['宗制・宗法','宗法第29条。宗門は何を振興し、何のために機関を設け、何を行う？','教学を振興し、広く人材を養成するため、学校その他の機関を設けて、教育及び研究を行う。'],
+['宗制・宗法','宗法第31条。総局の設置目的は？','宗門の宗務を執行する機関として、総局を置く。'],
+['宗制・宗法','宗法第41条。企画諮問会議の設置目的は？','年度の予算及び基本方針など、宗務の重要事項に関する企画立案について諮問するため。'],
+['宗制・宗法','宗法第84条。決算の作成から宗会報告までの流れは？','毎会計年度終了後3か月以内に、予算と同一の区分により総長が作成→監正局会計監査委員会の検査→門主に上申→検査報告とともに常務委員会の承認→翌年度の定期宗会に報告。'],
+['宗制・宗法','宗法第84条第2項。決算に添える4点は？','財産目録／貸借対照表／説明書／宗務の執行に関する成果表。'],
+['宗制・宗法','宗法第95条。この宗門の法人格と法人規則の名称は？','宗教法人法による宗教法人であり、その法人規則を「宗規」という。'],
+['宗制・宗法','本山典令第5条。本願寺の位置づけと護持主体は？','宗門の本山であり、一宗弘教の根本道場。宗門に包括されるすべての個人及び団体によって永世護持される。'],
+['宗制・宗法','宗制変更に必要な宗会議員の出席数は？','宗会議員定数の4分の3以上。'],
+['宗制・宗法','宗制変更の議決要件は？','出席した宗会議員の4分の3以上。'],
+['宗制・宗法','宗制変更について宗門投票で決定する期限は？','2か月以内。'],
+['宗制・宗法','宗会はどのような機関か。','宗門の重要な宗務に関し、評議又は議決する機関。'],
+['宗制・宗法','常務委員会はどのような機関か。','宗務の執行に必要な重要事項を議決する機関。'],
+['宗制・宗法','本願寺は宗門においてどのように位置づけられるか。','一宗弘教の根本道場。'],
+['選挙・得度','総長候補者を指名するのは誰か。','門主。候補者は教師から2人又は3人を指名する。'],
+['選挙・得度','総長選挙で当選に必要な得票は？','投票総数の過半数。過半数がなければ上位2人で再投票。'],
+['選挙・得度','得度式を受けられる年齢は？','原則、年齢15歳以上。15歳未満は受けられない。ただし、後継の住職となるべき者で特別の事由がある者は、年齢9歳以上で受けることができる。'],
+['選挙・得度','得度式とは？','師弟同信の意をあらわし、宗門の僧侶としての誓約を結ぶ儀式。'],
+['直轄・開教区','直轄寺院の目的で重要な表現は？','都市圏における伝道教化の中心道場。'],
+['直轄・開教区','直轄寺院の宗務室の構成は？','宗務長1人、副宗務長2人。'],
+['直轄・開教区','直轄寺院評議会の評議員は何人？','7人。'],
+['直轄・開教区','直轄寺院評議会の定足数は？','評議員定数の4分の3以上の出席。'],
+['直轄・開教区','宗務特別開教区は、国内で特に何を図る必要がある地域？','都市開教の促進。'],
+['直轄・開教区','宗務特別開教区基本規程の「開教拠点」とは？','直轄寺院が設置する出張所、布教所等。'],
+['直轄・開教区','宗務特別開教区基本規程の「活動拠点」とは？','寺院が当該寺院の主たる事務所以外に設置する従たる事務所、支坊、支院、布教所、出張所等。'],
+['直轄・開教区','宗務特別開教区基本規程の「都市開教」とは？','特に人口過密化現象の著しい都市圏における開教。'],
+['宗務機構・会計','宗務部門の3区分は？','経常部門・特別部門・附属部門。'],
+['宗務機構・会計','宗門総合振興計画終結時の剰余金はどこへ繰り入れる？','宗門振興推進金庫。'],
+['宗務機構・会計','宗門総合振興計画の継続事項で、特別会計を設定する2事項は？','「宗門のDX推進」及び「北境内地の総合的活用方策の検討」。'],
+['宗務機構・会計','経常部門の4部門は？','企画管理部門・研究業務部門・経常業務部門・財政事業部門。'],
+['宗務機構・会計','現行の経常業務部門に置かれる4部は？','伝道部／教化部／社会部／寺院活動支援部。'],
+['宗務機構・会計','現行の財政事業部門に置かれる部と、その中の課は？','財政事業部。財政事業部に経理課を置く。'],
+['宗務機構・会計','企画管理部門に置かれる機関は？','統合企画室。'],
+['宗務機構・会計','研究業務部門に置かれる2研究所は？','浄土真宗本願寺派総合研究所／本願寺史料研究所。'],
+['宗務機構・会計','随意契約によることができる6条件を答えよ。','①急を要し競争に付する暇がない ②特殊の物件を生産者・製造者・所有者から直接買入・借入する必要 ③労力の供給を請負わせる ④外国で契約 ⑤土地・建物を特別の縁故ある者に譲渡・貸付 ⑥契約の目的・性質により随意契約が適当と総長が認めたとき。'],
+['宗勢調査','宗勢基本調査は何年ごと？','5年ごと。'],
+['宗勢調査','宗勢調査規程の目的。「常に（　）を基礎として…もって（　）に寄与する」','宗門の実態／宗門の発展。'],
+['宗勢調査','第12回宗勢基本調査の実施期間は？','2026年6月1日から6月25日まで。'],
+['宗勢調査','第12回宗勢基本調査の実施機関として総合研究所に置かれるものは？','第12回宗勢基本調査実施センター。'],
+['宗教法人法','宗教法人法第2条の「宗教団体」の主たる目的を3つ。','宗教の教義をひろめる／儀式行事を行う／信者を教化育成する。'],
+['宗教法人法','宗教法人に解散命令を命ずる機関は？','裁判所。'],
+['宗教法人法','代表役員及びその代務者を欠く期間が何年以上なら解散命令事由？','1年以上。'],
+['宗教法人法','礼拝施設滅失後、何年以上備えなければ解散命令事由？','2年以上（やむを得ない事由がない場合）。'],
+['宗教法人法','宗教法人の所轄庁は原則として誰？','都道府県知事。'],
+['宗教法人法','宗教法人は何によって成立する？','主たる事務所の所在地における設立の登記。'],
+['宗教法人法','規則の認証書交付後、設立登記は何週間以内？','2週間以内。'],
+['宗教法人法','責任役員は何人以上？','3人以上。そのうち1人を代表役員とする。'],
+['宗教法人法','代表役員の職務は？','宗教法人を代表し、その事務を総理する。'],
+['宗教法人法','責任役員は宗教法人の事務をどうする？','規則に別段の定めがなければ、宗教法人の事務を決定する。'],
+['宗教法人法','解散後の清算人は原則誰？','代表役員又はその代務者。'],
+['宗教法人法','清算人の職務を3つ。','現務の結了／債権の取立て及び債務の弁済／残余財産の引渡し。'],
+['宗教法人法','清算人は就職の日から何か月以内に債権者へ公告？','1か月以内。'],
+['宗教法人法','債権者が申し出る期間は何か月以上？','3か月以上。'],
+['宗教法人法','残余財産はまず何に従って処分する？','規則で定めるところによる。'],
+['宗教法人法','最終的に処分されない残余財産はどこへ？','国庫。'],
+['宗教法人法','過去帳等の取扱基準は何に反しないよう定める？','基本的人権の尊重。'],
+['宗教法人法','過去帳等の取扱責任者は誰？','宗門に属する寺院その他これに準ずる団体の住職又は代表者。'],
+['宗教法人法','過去帳等について許してはならないものは？','閲覧。'],
+['宗教法人法','解散命令後も信者個人が信仰を続けられる根拠は？','法人格を失っても信仰は禁止されず、日本国憲法第20条により信教の自由が保障されているため。'],
+
+['2026中期計画','宗務の中期計画の推進期間は？','2026（令和8）年4月1日から2031（令和13）年3月31日までの5会計年度。'],
+['2026中期計画','宗務の中期計画のスローガンは？','「ともにお念仏申す身となる」。'],
+['2026中期計画','宗務の中期計画で、宗門のあらゆる活動の基本とされるものは？','お念仏のみ教え。'],
+['2026中期計画','宗務の中期計画は、何の力を向上させる施策を設定・推進する？','住職を中心とした一般寺院及び非法人寺院（寺院）の伝道教化力。'],
+['2026中期計画','宗務の中期計画の重点施策は？','「住職総参拝の実施」。'],
+['2026中期計画','宗務の中期計画の注力施策を3つ。','「研修の充実」「研究の推進」「教化活動の推進」。'],
+['2026中期計画','「住職総参拝の実施」は、誰を中心に、何を基礎として伝道教化を図る？','全住職を中心に、全国の寺院を基礎として、宗門の強力な伝道教化を図る。'],
+['2026中期計画','「住職総参拝の実施」で必要不可欠とされる、住職による働きかけは？','僧侶及び寺族の教導並びに門徒の教化育成。'],
+['2026中期計画','注力施策「研修の充実」において、組長研修会で重視される組長の役割は？','宗務員としての職務と責任を自覚し、伝道教化活動のリーダー・組内寺院の伝道教化のけん引役となること。'],
+['2026中期計画','「研修の充実」で、僧侶が学習できる環境を整備するとされる3分野は？','確かな教義・伝道・勤式。'],
+['2026中期計画','中期計画は各年度の何の基となる計画？','今後5会計年度における各年度の宗務の基本方針・具体策の基となる計画。'],
+['2026中期計画','中期計画は会計年度ごとに何を行う？','施策の推進状況を点検し、必要に応じて見直しを行いながら推進する。'],
+['2026中期計画','注力施策「研修の充実」の具体策を5つ。','組長研修会の実施／勉強会・学習会等への参加奨励及び伝道教化資料の作成と研修の充実／勤式研修の実施／ご法座活動の充実／浄土真宗インターナショナルオフィス（JSIO）の機能の強化。'],
+['2026中期計画','「勤式研修の実施」では誰が何を伝える？','特別法務員が現行の勤式作法を伝える研修会を実施する。'],
+['2026中期計画','「ご法座活動の充実」で重視される2点は？','聴聞の場づくり／ご法座開催の奨励。'],
+['2026中期計画','JSIOの機能強化では、海外との関係で何をめざす？','海外から有効な伝道方法をフィードバックし、海外での教学面の研修を充実させ、互いに有効な伝道方法を見出す。'],
+['2026中期計画','注力施策「研究の推進」の具体策を2つ。','聖典の研究と編纂／現代的諸課題の研究と発信。'],
+['2026中期計画','「聖典の研究と編纂」の主な内容は？','「浄土真宗聖典」の現代語訳化、英語の翻訳作業との連携、「浄土真宗法彙全書」の編纂。'],
+['2026中期計画','「現代的諸課題の研究と発信」は何をめざす？','現代的諸課題を研究し、正確な知識を提供するとともに、ご法義に基づいた宗門としての発信を行う。'],
+['2026中期計画','注力施策「教化活動の推進」の具体策を2つ。','教化活動団体等の活性化及び寺院等における育成教化活動に関する支援／「連研」の奨励と参加しやすい環境整備。'],
+['2026中期計画','中期計画の理念がめざすものは？','宗制に掲げる宗門の基本理念の実現。基本理念を共有し、一人ひとりが参画・実践し、中長期的視点で僧侶・寺族・門徒が協同して取り組む。'],
+['2026中期計画','「ともにお念仏申す身となる」とは、どのような歩み？','先人方、いま有縁の方々、これからの人々とともに阿弥陀さまの本願のおこころを聞き、そのはたらきを信じよろこび、「南無阿弥陀仏」とお念仏申す身とならせていただく歩み。'],
+['2026中期計画','住職総参拝は中期計画の5年間で総数何回を予定？','総数50回。各住職はいずれかの回に参拝する。'],
+['2026中期計画','住職総参拝を重点施策とした背景として、総長執務方針で示された課題は？','組や寺院など現場からの信頼を取り戻し、失われた求心力を回復すること。'],
+['2026中期計画','3つの注力施策によって向上を図る僧侶の基礎的能力の例は？','ご法義の研鑽、布教伝道、勤式作法など。'],
+['2026中期計画','3つの注力施策によって、日々の何をより一層充実させる？','日々の法務、ご法座、教化活動。'],
+['2026重要宗務','宗門総合振興計画はいつ終結した？','2025（令和7）年3月31日。平成27年6月1日から10会計年度にわたり推進された。'],
+['2026重要宗務','宗門総合振興計画終了時の剰余金はどこへ繰り入れる？','宗門振興推進金庫。'],
+['2026重要宗務','宗門総合振興計画の継続事項で、特別会計を設定して経理する2事項は？','「宗門のDX推進」及び「北境内地の総合的活用方策の検討」。'],
+['2026重要宗務','宗務部門職制規程でDX推進関係の所掌事項として掲げられるものを1つ。','DX推進の方向性の検討／宗門におけるDX推進／DX推進による宗務の効率改善／ITシステム・ネットワーク・通信情報機器の管理運用、のいずれか。'],
+['2026重要宗務','「伝わる伝道の研究と実践プロジェクトチーム」はどこに設置される？','浄土真宗本願寺派総合研究所。'],
+['2026重要宗務','「伝わる伝道の研究と実践プロジェクトチーム」の目的は？','時代の状況や人びとの意識に応じた伝道方法の研究と実践を行い、「伝わる伝道」を推進すること。'],
+['2026重要宗務','「伝わる伝道」のプロジェクトチームの所掌事項を1つ。','現代人に他力念仏が伝わる教学の調査研究／「伝わる言葉」の創出／各種発信手段による「伝わる言葉」の発信、のいずれか。'],
+
+
+['宗務員規程','宗務員規程第1条。この規程が定める対象は？','宗法第7章及び宗規第3章の規定に基づく、宗門の宗務に従事する者（宗務員）について、共通の服務その他に関する基本的事項。'],
+['宗務員規程','宗務員の本分。「宗務は、すべて（　）をひろめ伝えるための（　）である。」','如来の大悲／公務。'],
+['宗務員規程','宗務員は何の本分を全うし、何の永世護持に努めなければならない？','大悲伝化の本分を全うするとともに、本山本願寺の永世護持に努めなければならない。'],
+['宗務員規程','宗務員の3つの種別は？','第1種宗務員／第2種宗務員／第3種宗務員。'],
+['宗務員規程','教務所の職員は第何種宗務員？','第2種宗務員。'],
+['宗務員規程','組長及び副組長は第何種宗務員？','第3種宗務員。'],
+['宗務員規程','宗務員補任の原則。どのような者から補任する？','僧侶又は帰敬式を受けた寺族及び門徒のうちから補任することを原則とする。'],
+['宗務員規程','宗務員等級の4区分と各等級数は？','特授1〜3等／親授1〜4等／禀授1〜5等／例授1〜3等。'],
+['宗務員規程','宗務員等級の付与・昇級などの事務を統括するのは誰？','総長。'],
+['宗務員規程','宗務員の守秘義務は退職後どうなる？','退職後も同様に、職務上知り得た秘密を漏らすことができない。'],
+['宗務員規程','第2種宗務員の復命義務とは？','職務を行うについて、上長宗務員の命に従わなければならない。'],
+['宗務員規程','第2種宗務員の職務専念義務。上長宗務員の許可なくできないことは？','本職のほかに俸給又は手当等を得て、他の業務を行うこと。'],
+['宗務員規程','第2種宗務員は、上長宗務員の許可なく職務又は任地をどうしてはならない？','職務を離れ、又は任地から離れてはならない。'],
+['宗務員規程','宗務員は職務に関して、濫りに何を受けてはならない？','他人の贈与。'],
+['宗務員規程','第2種宗務員を解職できる事由を1つ挙げよ。','例：不法行為／精神又は身体の故障で職務不能／職制・規則変更による過員／勤務怠慢／勤務成績不良／一身上の都合による退職願。'],
+['宗務員規程','病気その他の事故で何か月以上職務を執れないとき、休職を命じることができる？','3か月以上。'],
+['宗務員規程','私事欠勤が何か月に達し、なお欠勤が続くとき、休職を命じることができる？','1か月。'],
+['宗務員規程','第21条による休職期間は通例何年以内？','1年以内。'],
+['宗務員規程','宗務員資格試験の3種類は？','事務員資格試験／法務員資格試験／特別法務員資格試験。'],
+['宗務員規程','宗務員資格試験は原則として毎年いつ実施する？','7月又は8月。'],
+['宗務員規程','管理職任用資格試験は何種に分かれる？','第1種及び第2種。'],
+['宗務員規程','宗務員講習会の3種類は？','基本講習会／実務講習会／管理職講習会。'],
+['宗務員規程','第2種宗務員に宗務員講習会の受講義務はある？','ある。第2種宗務員は講習会を受講しなければならない。'],
+['宗務員規程','基本講習会の目的は？','宗務に関する基礎的事項を修得するため。'],
+['宗務員規程','実務講習会の目的は？','宗務に関する全般的な実務を修得するため。'],
+['宗務員規程','管理職講習会の目的は？','管理職として必要な技能的、専門的知識を修得するため。'],
+['宗務機構・会計','会計規程第51条。宗派の経済的負担となる契約は原則どの方法？','指名競争。別に定めるものを除き、すべて指名競争に付す。'],
+['宗務機構・会計','指名競争に付するとき、競争者は何人以上指名する？','3人以上。'],
+['宗務機構・会計','随意契約によろうとする場合、見積書はなるべく何人以上から徴する？','2人以上。'],
+['宗務機構・会計','契約締結の原則的手続は？','契約書の文案その他必要資料を具した立案文書によって、総長の決裁を経てから相手方と契約を締結する。変更・解除も同様。'],
+['宗務機構・会計','会計規程第55条で備える簿表を3つ挙げよ。','例：予算簿／支出伝票綴／収納伝票綴／物品出納簿／備品台帳。'],
+['宗勢調査','宗勢基本調査に関する事務を所掌するのは？','浄土真宗本願寺派総合研究所。'],
+['宗勢調査','宗勢指定調査はいつ行う？','必要のつど、各宗務部門がそれぞれの所掌事項に応じて行う。'],
+['宗勢調査','宗勢指定調査の成果はどこへ回移する？','統合企画室。'],
+['宗勢調査','宗勢調査で知り得た秘密はどう扱う？','何人も、調査統計の実施上知り得た秘密を他にもらすことはできない。'],
+['宗制・宗法','宗法第4条。門主の職務を穴埋め。「法灯を伝承して、この宗門を（　）し、宗務を（　）する。」','統一／統理。'],
+['宗制・宗法','宗法第71条。宗門の会計年度は？','毎年4月1日に始まり、翌年3月31日に終る。'],
+['宗制・宗法','宗法第83条。暫定予算の編成は何度限りで、期間は最長何か月？','1度限り、3か月を超えてはならない。'],
+['宗制・宗法','宗法第85条。決算に剰余を生じたときは？','翌年度の歳入に繰り入れる。'],
+['宗制・宗法','宗法第88条。宗門の財産の2区分は？','基本財産及び運用財産。'],
+
+];
+const past=["1 宗制","2 宗法・本山典令","3 総長選挙規程","4 執行長選挙規程","5 得度規程","6 直轄寺院規程","7 宗務特別開教区基本規程","8 宗門総合振興計画終結に伴う宗務措置規程","9 宗務部門職制規程・内局部門組織規程","10 会計規程（随意契約）","11 宗勢調査規程・第12回宗勢基本調査","12 過去帳又はこれに類する帳簿の取扱基準","13 宗教団体の主たる目的","14 解散命令を命ずる機関","15 解散命令の事由","16 信教の自由と解散命令","17 論述（戦後80年・平和貢献策）"];
+const essays=[["2026最重要予想：宗務の中期計画", "宗務の中期計画について、スローガン、重点施策及び注力施策を踏まえ、宗務推進の上からあなたが重要と考える具体的な取り組みを述べなさい。", "①「ともにお念仏申す身となる」 ②重点施策「住職総参拝」 ③注力施策「研修の充実・研究の推進・教化活動の推進」 ④寺院の伝道教化力向上 ⑤自分の担当宗務での具体策、の順で組み立てる。"], ["2025年度実物：戦後80年・平和貢献策", "宗門では戦後80年にあたっての平和貢献策を7つ定めています。そのうち1つを挙げたうえで、宗務推進の上からあなたの考える具体的な取り組みを述べなさい。", "まず平和貢献策を1つ正確に示し、その趣旨→宗務との接続→具体的取組→期待する効果の順で構成する。"], ["2026予想：担当宗務への具体化", "宗務の中期計画に掲げる方向性を踏まえ、あなたの担当する宗務業務において、どのように具体化していくか述べなさい。", "計画の文言を示したうえで、現場の課題、実施方法、関係者への働きかけ、期待する効果まで具体化する。"], ["2026予想：寺院・僧侶・門信徒への働きかけ", "宗務の中期計画を踏まえ、寺院・僧侶・門信徒への働きかけとして必要と考える施策を挙げ、宗務推進の観点から述べなさい。", "中期計画の方向性と現場課題を結び、誰に・何を・どう実施するか、その効果まで書く。"]];
+
+const KEY='shoukyu3-public-auto';
+let hist=JSON.parse(localStorage.getItem(KEY)||'{}');
+Object.keys(hist).forEach(k=>{if(hist[k]&&Object.prototype.hasOwnProperty.call(hist[k],'input')) delete hist[k].input;});
+localStorage.setItem(KEY,JSON.stringify(hist));
+let pool=[...Array(qs.length).keys()], pos=0;
+
+const aliases={
+ '5会計年度':['5会計年度','5年','5年間'],
+ '総長':['総長','浄土真宗本願寺派総長'],
+ '3か月':['3か月','3ヶ月','三か月','3カ月'],
+ '1年':['1年','一年'],
+ '4分の3':['4分の3','四分の三','3/4'],
+ '5年ごと':['5年ごと','5年毎','5年に1回','5年に一度']
+};
+function norm(s){return (s||'').normalize('NFKC').toLowerCase().replace(/[　\s。、，,・／/「」『』（）()]/g,'').replace(/ヶ/g,'か');}
+function answerTokens(a){return a.split(/[／\n]/).map(x=>x.trim()).filter(Boolean)}
+function autoGrade(user, ans){
+ const u=norm(user); if(!u)return {kind:'empty',score:0};
+ const parts=answerTokens(ans);
+ // short objective answers: exact/contained + common aliases
+ if(parts.length===1){
+   let a=parts[0], candidates=[a,...(aliases[a]||[])].map(norm);
+   let ok=candidates.some(x=>u===x || (x.length>=3 && u.includes(x)));
+   return {kind:ok?'correct':'wrong',score:ok?1:0};
+ }
+ // multi-part: requirement coverage
+ let hit=parts.filter(p=>{let n=norm(p); return n.length>=2 && u.includes(n)}).length;
+ let ratio=hit/parts.length;
+ return {kind:ratio===1?'correct':ratio>=.5?'partial':'wrong',score:ratio,hit,total:parts.length};
+}
+function isLong(q,a){return q.length>70 || a.length>130 || /述べ|説明|理由|論述|具体的/.test(q);}
+function save(){localStorage.setItem(KEY,JSON.stringify(hist));stats();bycat()}
+function showTab(n){
+ ['quiz','past','pred','essay'].forEach(x=>document.getElementById(x+'Pane').classList.toggle('hidden',x!==n));
+ ['Quiz','Past','Pred','Essay'].forEach(x=>{let e=document.getElementById('t'+x);if(e)e.classList.toggle('active',x.toLowerCase()===n)});
+}
+function setPool(arr){pool=arr.length?arr:[...Array(qs.length).keys()];pos=0;showTab('quiz');renderQ()}
+function startAll(){let c=document.getElementById('cat').value;setPool(qs.map((q,i)=>c==='全分野'||q[0]===c?i:null).filter(x=>x!==null))}
+function startRandom(){let a=[...Array(qs.length).keys()].sort(()=>Math.random()-.5).slice(0,10);setPool(a)}
+function startWeak(){
+ const a=Object.keys(hist).filter(i=>hist[i].status!=='correct').map(Number);
+ if(!a.length){showTab('quiz');document.getElementById('qcard').innerHTML='<div class="answer correct"><b>現在、要復習問題はありません。</b><br><span class="small">×・△になった問題はここに入り、正解すると自動的に外れます。</span></div>';return}
+ setPool(a)
+}
+function startFocus(word){setPool(qs.map((q,i)=>(q[0]+q[1]+q[2]).includes(word)?i:null).filter(x=>x!==null))}
+function startImportant(){
+ const keys=['宗務機構・会計','宗務員規程','2026中期計画','2026重要宗務'];
+ setPool(qs.map((q,i)=>keys.includes(q[0])?i:null).filter(x=>x!==null))
+}
+function startPredMock(){
+ let a=qs.map((q,i)=>['2026中期計画','宗務機構・会計','宗務員規程','宗制・宗法'].includes(q[0])?i:null).filter(x=>x!==null).sort(()=>Math.random()-.5).slice(0,20);setPool(a)
+}
+function pastGo(label){
+ const n=parseInt(label,10);
+ const catMap={
+  1:'宗制・宗法',2:'宗制・宗法',3:'選挙・得度',4:'選挙・得度',5:'選挙・得度',
+  6:'直轄・開教区',7:'直轄・開教区',8:'2026重要宗務',9:'宗務機構・会計',
+  10:'宗務機構・会計',11:'宗勢調査',12:'宗教法人法',13:'宗教法人法',
+  14:'宗教法人法',15:'宗教法人法',16:'宗教法人法'
+ };
+ if(n===17){showTab('essay');essaySel.value='1';renderEssay();return}
+ let cat=catMap[n], arr=qs.map((q,i)=>q[0]===cat?i:null).filter(x=>x!==null);
+ setPool(arr);
+}
+function renderQ(){
+ let idx=pool[pos%pool.length], q=qs[idx], h=hist[idx]||{};
+ let mode=isLong(q[1],q[2])?'keyword':'auto';
+ let pct=Math.round(((pos%pool.length)+1)/pool.length*100);
+ document.getElementById('qcard').innerHTML=`
+ <div class="qmeta">${q[0]}　${(pos%pool.length)+1}/${pool.length}</div><div class="progress"><i style="width:${pct}%"></i></div>
+ <div class="q">${q[1]}</div>
+ <textarea id="ans" placeholder="ここに解答を入力…"></textarea>
+ <button class="primary wide" style="width:100%;margin-top:12px" onclick="grade(${idx},'${mode}')">採点する</button>
+ <div id="result"></div>
+ <div class="grid" style="margin-top:14px"><button onclick="prev()">← 前</button><button class="primary" onclick="next()">次 →</button></div>`;
+}
+function grade(idx,mode){
+ let q=qs[idx], u=document.getElementById('ans').value.trim(), r=autoGrade(u,q[2]), box=document.getElementById('result');
+ if(!u){box.innerHTML='<div class="answer wrong">解答を入力してください。</div>';return}
+ if(mode==='auto'){
+   hist[idx]={status:r.kind,score:r.score,attempts:(hist[idx]?.attempts||0)+1};
+   let label=r.kind==='correct'?'○ 正解':r.kind==='partial'?`△ 要件 ${r.hit}/${r.total}`:'× 不正解';
+   box.innerHTML=`<div class="answer ${r.kind}"><div class="score">${label}</div><b>模範解答</b><br>${q[2]}<div class="small">※表記揺れを一部許容した自動判定です。意味が同じなのに×になった場合は模範解答を優先してください。</div><button class="ghost" style="margin-top:10px" onclick="retryCurrent()">この問題を白紙でもう一度</button></div>`;
+ }else{
+   let parts=answerTokens(q[2]).filter(x=>x.length>=2).slice(0,6);
+   let hits=parts.map(x=>norm(u).includes(norm(x)));
+   let n=hits.filter(Boolean).length;
+   hist[idx]={status:n===parts.length?'correct':n? 'partial':'wrong',score:parts.length?n/parts.length:0,attempts:(hist[idx]?.attempts||0)+1};
+   box.innerHTML=`<div class="answer ${n===parts.length?'correct':n?'partial':'wrong'}"><div class="score">重要語 ${n}/${parts.length}</div>
+   <b>チェック</b><br>${parts.map((x,i)=>`${hits[i]?'✓':'□'} ${x}`).join('<br>')}<hr><b>答案構成・模範解答</b><br>${q[2]}
+   <div class="small">長文は文字列の完全一致ではなく、重要要素の含有を補助判定しています。最終確認は答案構成と照合してください。</div><button class="ghost" style="margin-top:10px" onclick="retryCurrent()">この問題を白紙でもう一度</button></div>`;
+ }
+ save()
+}
+function retryCurrent(){renderQ()} function next(){pos=(pos+1)%pool.length;renderQ()} function prev(){pos=(pos-1+pool.length)%pool.length;renderQ()}
+function stats(){
+ let v=Object.values(hist), d=v.length, c=v.filter(x=>x.status==='correct').length,w=v.filter(x=>x.status!=='correct').length;
+ document.getElementById('done').textContent=d;
+ document.getElementById('rate').textContent=d?Math.round(c/d*100)+'%':'0%';
+ document.getElementById('weak').textContent=w
+}
+function bycat(){
+ let cats=[...new Set(qs.map(q=>q[0]))], el=document.getElementById('bycat');
+ el.innerHTML=cats.map(c=>{let ids=qs.map((q,i)=>q[0]===c?i:null).filter(x=>x!==null),done=ids.filter(i=>hist[i]).length,ok=ids.filter(i=>hist[i]?.status==='correct').length,tries=ids.reduce((n,i)=>n+(hist[i]?.attempts||0),0);return `<div style="margin:10px 0"><b>${c}</b> <span class="small">${ok}/${done} 正解・${tries}回挑戦</span><div class="progress"><i style="width:${done?ok/done*100:0}%"></i></div></div>`}).join('')
+}
+function renderEssay(){
+ const sel=document.getElementById('essaySel');
+ const card=document.getElementById('essayCard');
+ let i=Number(sel.value||0), e=essays[i];
+ if(!e){card.innerHTML='<div class="answer wrong">論述問題データを読み込めませんでした。</div>';return}
+ let saved=localStorage.getItem(KEY+'-essay-'+i)||'';
+ let criteria=['設問に正面から答えている','根拠となる宗務・施策を正確に示した','自分の具体的な取り組みを書いた','宗務推進とのつながりを説明した','結論が明確である'];
+ card.innerHTML=`<div class="qmeta">${e[0]}</div><div class="q">${e[1]}</div>
+ <textarea id="essayText" oninput="saveEssay(${i})" placeholder="答案を書く…">${saved}</textarea>
+ <div class="small"><span id="chars">${saved.length}</span>字</div>
+ <h3>採点基準</h3><div class="rubric">${criteria.map(x=>`<label><input type="checkbox" style="width:auto" onchange="rubricScore()"> ${x}</label>`).join('')}</div>
+ <div id="rubScore" class="score">0 / 5</div>
+ <button onclick="document.getElementById('model').classList.toggle('hidden')">答案構成例を表示</button>
+ <div id="model" class="answer hidden">${e[2]}</div>`;
+}
+function saveEssay(i){
+ const t=document.getElementById('essayText').value;
+ localStorage.setItem(KEY+'-essay-'+i,t);
+ document.getElementById('chars').textContent=t.length;
+}
+function rubricScore(){
+ const n=[...document.querySelectorAll('.rubric input')].filter(x=>x.checked).length;
+ document.getElementById('rubScore').textContent=n+' / 5';
+}
+function init(){
+ const catEl=document.getElementById('cat');
+ const pastEl=document.getElementById('pastList');
+ const essayEl=document.getElementById('essaySel');
+ let cats=[...new Set(qs.map(q=>q[0]))];
+ catEl.innerHTML='<option>全分野</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+ pastEl.innerHTML=past.map(x=>`<button class="pastbtn" onclick='pastGo(${JSON.stringify(x)})'>${x}　→ 演習</button>`).join('');
+ essayEl.innerHTML=essays.map((e,i)=>`<option value="${i}">${e[0]}</option>`).join('');
+ essayEl.value='0';
+ stats();bycat();renderQ();renderEssay();
+}
+init();
+</script></body></html>
