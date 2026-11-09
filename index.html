@@ -18,7 +18,15 @@ textarea{min-height:120px}.qmeta{color:var(--g);font-weight:800}.q{font-size:23p
 .hidden{display:none!important}.progress{height:10px;background:#e4e0d6;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--g)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
 @media(max-width:520px){header h1{font-size:25px}.tabs{grid-template-columns:repeat(3,1fr)}.tabs button{font-size:14px;padding:11px 5px}.wrap{padding:10px}.card{padding:17px}.q{font-size:21px}.grid{grid-template-columns:1fr 1fr}.btn,button{font-size:15px;padding:12px 12px}}
-</style></head><body>
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b2b5e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="3等級試験対策">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head><body>
 <header><h1>職務等級3等級 昇級試験対策</h1><p>2025実物過去問 × 現行宗門法規 × 2026重点宗務</p></header>
 <div class="wrap">
 <div class="card notice"><b>この教材について</b>
@@ -351,4 +359,8 @@ function init(){
  stats();bycat();renderQ();renderEssay();
 }
 init();
-</script></body></html>
+</script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
+</script>
+</body></html>

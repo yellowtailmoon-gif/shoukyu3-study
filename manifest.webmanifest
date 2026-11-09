@@ -1,0 +1,14 @@
+{
+  "name": "職務等級3等級 昇級試験対策",
+  "short_name": "3等級試験対策",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f1e7",
+  "theme_color": "#0b2b5e",
+  "lang": "ja",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
