@@ -15,7 +15,7 @@ input,textarea,select{width:100%;font-size:18px;padding:14px;border:2px solid #c
 textarea{min-height:120px}.qmeta{color:var(--g);font-weight:800}.q{font-size:23px;margin:14px 0}.answer{margin-top:14px;padding:16px;border-radius:16px;background:#f0f5f1}.correct{border-left:6px solid var(--ok)}.wrong{border-left:6px solid var(--ng)}.partial{border-left:6px solid var(--warn)}
 .small{font-size:14px;color:var(--muted)}.score{font-size:22px;font-weight:800}.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{padding:7px 10px;border-radius:999px;background:#ece9df;font-size:13px}
 .pastbtn{width:100%;text-align:left;margin:5px 0;background:#faf9f4;border:1px solid var(--line)}.rubric label{display:block;padding:10px 0;border-bottom:1px solid var(--line)}
-.hidden{display:none!important}.progress{height:10px;background:#e4e0d6;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--g)}
+.clozeText{font-size:23px;line-height:1.9}.blank{display:inline-block;min-width:5em;border-bottom:3px solid var(--g);text-align:center;color:var(--g);font-weight:800;padding:0 .25em}.fastResult{margin-top:10px;font-weight:800}.hidden{display:none!important}.progress{height:10px;background:#e4e0d6;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--g)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
 @media(max-width:520px){header h1{font-size:25px}.tabs{grid-template-columns:repeat(3,1fr)}.tabs button{font-size:14px;padding:11px 5px}.wrap{padding:10px}.card{padding:17px}.q{font-size:21px}.grid{grid-template-columns:1fr 1fr}.btn,button{font-size:15px;padding:12px 12px}}
 </style>
@@ -38,6 +38,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
 <div class="card">
  <div class="tabs">
   <button id="tQuiz" class="active" onclick="showTab('quiz')">一問一答</button>
+  <button id="tCloze" onclick="showTab('cloze')">穴埋め高速</button>
   <button id="tPast" onclick="showTab('past')">2025過去問</button>
   <button id="tWeak" onclick="startWeak()">要復習</button>
   <button id="tPred" onclick="showTab('pred')">2026予想</button>
@@ -53,6 +54,15 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
   </div><div class="small" style="margin-top:10px">採点後は入力した答案と正解をその場で確認できます。「次へ」や再挑戦では解答欄を白紙に戻し、端末には正誤・挑戦回数などの学習履歴だけを保存します。論述答案のみ途中保存します。</div>
  </div>
  <div id="qcard" class="card"></div>
+</section>
+
+<section id="clozePane" class="hidden">
+ <div class="card">
+  <div class="qmeta">穴埋めランダム高速演習</div>
+  <p class="small">模範解答の重要語句を毎回ランダムに1〜2か所隠します。同じ問題でも穴の位置が変わります。Enterでも採点→次へ進めます。</p>
+  <div class="grid"><select id="clozeCat" class="wide" onchange="startCloze()"><option>全分野</option></select><button onclick="startCloze()">シャッフル</button><button onclick="nextCloze()">次の穴埋め →</button></div>
+ </div>
+ <div id="clozeCard" class="card"></div>
 </section>
 
 <section id="pastPane" class="hidden">
@@ -247,8 +257,8 @@ function gradeByRule(user,idx){
 function isLong(q,a){return q.length>70 || a.length>130 || /述べ|説明|理由|論述|具体的/.test(q);}
 function save(){localStorage.setItem(KEY,JSON.stringify(hist));stats();bycat()}
 function showTab(n){
- ['quiz','past','pred','essay'].forEach(x=>document.getElementById(x+'Pane').classList.toggle('hidden',x!==n));
- ['Quiz','Past','Pred','Essay'].forEach(x=>{let e=document.getElementById('t'+x);if(e)e.classList.toggle('active',x.toLowerCase()===n)});
+ ['quiz','cloze','past','pred','essay'].forEach(x=>document.getElementById(x+'Pane').classList.toggle('hidden',x!==n));
+ ['Quiz','Cloze','Past','Pred','Essay'].forEach(x=>{let e=document.getElementById('t'+x);if(e)e.classList.toggle('active',x.toLowerCase()===n)});
 }
 function setPool(arr){pool=arr.length?arr:[...Array(qs.length).keys()];pos=0;showTab('quiz');renderQ()}
 function startAll(){let c=document.getElementById('cat').value;setPool(qs.map((q,i)=>c==='全分野'||q[0]===c?i:null).filter(x=>x!==null))}
@@ -278,6 +288,62 @@ function pastGo(label){
  let cat=catMap[n], arr=qs.map((q,i)=>q[0]===cat?i:null).filter(x=>x!==null);
  setPool(arr);
 }
+let clozePool=[...Array(qs.length).keys()], clozePos=0, clozeState=null;
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function clozeCandidates(idx){
+ const a=qs[idx][2], r=gradeRules[idx], out=[];
+ r.groups.forEach(g=>{
+   let found=null;
+   for(const alt of g){ if(alt && a.includes(alt)){found=alt;break} }
+   if(found && found.length>=1 && !out.some(x=>x.text===found)) out.push({text:found,alts:g});
+ });
+ // 個別採点基準から取れない場合だけ、解答中の意味のある塊を候補にする
+ if(!out.length){
+   a.split(/[。／、→]/).map(x=>x.trim()).filter(x=>x.length>=2&&x.length<=35).forEach(x=>out.push({text:x,alts:[x]}));
+ }
+ return out;
+}
+function makeCloze(idx){
+ const a=qs[idx][2], cand=clozeCandidates(idx);
+ if(!cand.length)return {html:esc(a),targets:[]};
+ const shuffled=[...cand].sort(()=>Math.random()-.5);
+ // 短答は1穴、長めの模範解答は時々2穴
+ let count=1; // 高速周回を優先し、1問1穴。再表示のたび穴候補をランダム変更
+ let chosen=shuffled.slice(0,count).sort((x,y)=>a.indexOf(y.text)-a.indexOf(x.text));
+ let html=esc(a), targets=[];
+ // escaped answer上で安全に置換
+ chosen.forEach(c=>{let et=esc(c.text);html=html.replace(et,'<span class="blank">（　　）</span>');targets.push(c)});
+ return {html,targets};
+}
+function startCloze(){
+ let c=document.getElementById('clozeCat').value;
+ clozePool=qs.map((q,i)=>c==='全分野'||q[0]===c?i:null).filter(x=>x!==null).sort(()=>Math.random()-.5);
+ clozePos=0;showTab('cloze');renderCloze();
+}
+function renderCloze(){
+ if(!clozePool.length)clozePool=[...Array(qs.length).keys()];
+ let idx=clozePool[clozePos%clozePool.length], q=qs[idx], made=makeCloze(idx);clozeState={idx,...made};
+ let inputs=made.targets.map((t,i)=>`<input id="clz${i}" autocomplete="off" autocapitalize="off" placeholder="穴 ${i+1} の答え" style="margin-top:9px">`).join('');
+ document.getElementById('clozeCard').innerHTML=`<div class="qmeta">${esc(q[0])}　${(clozePos%clozePool.length)+1}/${clozePool.length}</div><div class="small">元問題：${esc(q[1])}</div><div class="clozeText" style="margin-top:14px">${made.html}</div>${inputs}<button class="primary" style="width:100%;margin-top:12px" onclick="gradeCloze()">判定する</button><div id="clozeResult"></div>`;
+ let first=document.getElementById('clz0');if(first){first.focus();made.targets.forEach((_,i)=>document.getElementById('clz'+i).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();gradeCloze()}}))}
+}
+function gradeCloze(){
+ if(!clozeState||!clozeState.targets.length){nextCloze();return}
+ let all=true, details=[];
+ clozeState.targets.forEach((t,i)=>{let u=document.getElementById('clz'+i).value.trim();let ok=hasAlt(norm(u),t.alts.map(norm)); /* exact normalized alternative */
+   // hasAlt is substring-basedなので、穴埋めでは逆方向も防ぎ完全な正規化一致にする
+   ok=t.alts.some(a=>norm(u)===norm(a));all=all&&ok;details.push(ok?'○':`× 正解：${esc(t.text)}`);
+ });
+ let box=document.getElementById('clozeResult');
+ if(all){box.innerHTML='<div class="answer correct"><b>○ 正解</b>　次へ進みます</div>';setTimeout(nextCloze,380)}
+ else{box.innerHTML=`<div class="answer wrong"><b>× もう一度</b><br>${details.join('　')}<div class="small">答えを確認したら隠して、もう一度思い出してください。</div><button class="ghost" style="margin-top:10px" onclick="hideClozeAnswer()">答えを隠して再挑戦</button><button class="ghost" style="margin-top:10px;margin-left:6px" onclick="nextCloze()">次の問題へ</button></div>`}
+}
+function hideClozeAnswer(){
+ let box=document.getElementById('clozeResult'); if(box) box.innerHTML='';
+ clozeState.targets.forEach((_,i)=>{let el=document.getElementById('clz'+i);if(el){el.value='';}});
+ let first=document.getElementById('clz0');if(first) first.focus();
+}
+function nextCloze(){clozePos=(clozePos+1)%clozePool.length;renderCloze()}
 function renderQ(){
  let idx=pool[pos%pool.length], q=qs[idx], h=hist[idx]||{};
  let mode=gradeRules[idx].mode;
@@ -341,10 +407,11 @@ function init(){
  const essayEl=document.getElementById('essaySel');
  let cats=[...new Set(qs.map(q=>q[0]))];
  catEl.innerHTML='<option>全分野</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+ document.getElementById('clozeCat').innerHTML='<option>全分野</option>'+cats.map(c=>`<option>${c}</option>`).join('');
  pastEl.innerHTML=past.map(x=>`<button class="pastbtn" onclick='pastGo(${JSON.stringify(x)})'>${x}　→ 演習</button>`).join('');
  essayEl.innerHTML=essays.map((e,i)=>`<option value="${i}">${e[0]}</option>`).join('');
  essayEl.value='0';
- stats();bycat();renderQ();renderEssay();
+ stats();bycat();renderQ();renderEssay();clozePool=[...Array(qs.length).keys()].sort(()=>Math.random()-.5);renderCloze();
 }
 init();
 </script>
